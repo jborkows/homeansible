@@ -1,0 +1,117 @@
+---
+- name: Run tasks on localhost
+  hosts: localhost
+  tasks:
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: "Hello, localhost!"
+- name: Fetch hostname
+  hosts: localhost
+  gather_facts: true
+  tasks:
+    - name: Print hostname
+      ansible.builtin.debug:
+        var: ansible_hostname
+- name: Ask for sudo
+  hosts: localhost
+  become: true
+  become_method: ansible.builtin.sudo
+  vars_prompt:
+    - name: ansible_become_password
+      prompt: "Enter your password for sudo:"
+      private: true
+- name: Update caches
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+    - name: Upgrade packages
+      apt:
+        upgrade: dist
+        autoremove: yes
+        autoclean: yes
+- name: Install packages
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Install 
+      ansible.builtin.apt:
+        name:
+        - cowsay
+        - python3
+        - python3.10-venv
+        - tar
+
+# - name: Python packages
+#   hosts: localhost
+#   tasks:
+#     - name: Upgrade Jinja2
+#       become: true
+#       ansible.builtin.pip:
+#         name: jinja2
+#         extra_args: --upgrade
+
+- name: Install Rust
+  hosts: localhost
+  tasks:
+    - name: Check if cargo is installed
+      ansible.builtin.command: which cargo
+      register: cargo_exists
+      ignore_errors: true
+
+    - name: Download cargo Installer
+      when: cargo_exists is failed
+      ansible.builtin.get_url:
+        url: https://sh.rustup.rs
+        dest: /tmp/sh.rustup.rs
+        mode: '0755'
+        force: 'yes'
+    - name: Install rust/cargo
+      when: cargo_exists is failed
+      ansible.builtin.shell: /tmp/sh.rustup.rs -y
+    - name: Upgrade Rust
+      become: true
+      ansible.builtin.command: rustup update
+- name: Install go
+  vars_files:
+    - vars.yml
+  hosts: localhost
+  tasks:
+    - name: Looking for
+      ansible.builtin.debug:
+        msg: "Looking to fetch {{ goversion }}"
+    - name: Check go version
+      ansible.builtin.command: go version
+      register: go_register
+      ignore_errors: true
+      # failed_when: go_register.rc != 0 or "{{ goversion }} not in go_register.stdout"
+      failed_when: go_register.rc != 0 or go_register.stdout.find(goversion)==-1
+    - name: Fetch
+      when: go_register.failed
+      ansible.builtin.get_url:
+        url: https://go.dev/dl/go{{ goversion }}.linux-amd64.tar.gz
+        dest: /tmp
+    - name: Clean old
+      when: go_register.failed
+      become: true
+      ansible.builtin.command: rm -rf /usr/local/go
+    - name: Install new
+      when: go_register.failed
+      become: true
+      ansible.builtin.command: tar -C /usr/local -xzf /tmp/go{{goversion}}.linux-amd64.tar.gz
+    - name: Check if PATH contains the path
+      command: echo $PATH
+      register: path_output
+    - name: Update PATH if the path is not present
+      ansible.builtin.lineinfile:
+        path: ~/.bashrc  # Path to the shell configuration file (e.g., ~/.bashrc)
+        line: 'export PATH="$PATH:/usr/local/go/bin "'
+        insertafter: EOF
+        state: present
+      when: "'/usr/local/go/bin' not in path_output.stdout"
+    - name: Source the shell configuration file
+      ansible.builtin.shell: |
+        source ~/.bashrc
+        echo "Changes to ~/.bashrc sourced"
