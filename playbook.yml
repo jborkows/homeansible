@@ -115,3 +115,13 @@
       ansible.builtin.shell: |
         source ~/.bashrc
         echo "Changes to ~/.bashrc sourced"
+- name: Install PNPM
+  hosts: localhost
+  gather_facts: false
+  become: true
+
+  tasks:
+    - name: Install Node.js and npm
+      apt:
+        name: nodejs
+        state: present
