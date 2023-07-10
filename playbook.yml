@@ -1,6 +1,7 @@
 ---
 - name: Run tasks on localhost
   hosts: localhost
+  gather_facts: false
   tasks:
     - name: Print a message
       ansible.builtin.debug:
@@ -14,6 +15,7 @@
         var: ansible_hostname
 - name: Ask for sudo
   hosts: localhost
+  gather_facts: false
   become: true
   become_method: ansible.builtin.sudo
   vars_prompt:
@@ -125,3 +127,13 @@
       apt:
         name: nodejs
         state: present
+- name: Install firebase cli
+  hosts: localhost
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: Install Firebase CLI
+      npm:
+        name: firebase-tools
+        global: yes
+
