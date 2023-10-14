@@ -15,7 +15,6 @@
         var: ansible_hostname
 - name: Ask for sudo
   hosts: localhost
-  gather_facts: false
   become: true
   become_method: ansible.builtin.sudo
   vars_prompt:
@@ -45,6 +44,9 @@
         - python3
         - python3.10-venv
         - tar
+        - jq
+        - xclip
+        # - xmllint
 
 # - name: Python packages
 #   hosts: localhost
@@ -136,4 +138,24 @@
       npm:
         name: firebase-tools
         global: yes
+- name: Generate pnpm completion script
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Generate pnpm completion
+      command: pnpm completion
+      register: completion_output
+      changed_when: false
 
+    - name: Save completion script to file
+      copy:
+        content: "{{ completion_output.stdout }}"
+        dest: ~/.pnpm-completion.sh
+        mode: '0644'
+    - name: Append completion lines to ~/.bashrc
+      blockinfile:
+        path: ~/.bashrc
+        block: |
+          if [ -f ~/.pnpm-completion.sh ]; then
+              . ~/.pnpm-completion.sh
+          fi
