@@ -44,3 +44,7 @@
   hosts: localhost
   roles:
     - fish
+- name: Neovim
+  hosts: localhost
+  roles:
+    - nvim
