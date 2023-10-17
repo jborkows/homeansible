@@ -18,3 +18,5 @@
     - xclip
     - fzf
     # - xmllint
+- name: Snaps 
+  ansible.builtin.command: snap refresh
