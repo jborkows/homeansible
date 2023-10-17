@@ -1,0 +1,24 @@
+---
+- name: Install fish
+  apt:
+    name: fish
+    state: present
+- name: Check if omf is installed
+  ansible.builtin.command: fish -c "omf version"
+  register: omf_exists
+  ignore_errors: true
+
+
+- name: Download omf Installer
+  when: omf_exists is failed
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install
+    dest: /tmp/sh.oh-my-fish
+    mode: '0755'
+    force: 'yes'
+- name: Install omf
+  when: omf_exists is failed
+  ansible.builtin.shell: fish /tmp/sh.oh-my-fish --noninteractive --yes
+- name: Install dracula
+  ansible.builtin.shell: fish -c "omf install https://github.com/dracula/fish"
+  ignore_errors: true
