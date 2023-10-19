@@ -15,5 +15,4 @@
   when: cargo_exists is failed
   ansible.builtin.shell: /tmp/sh.rustup.rs -y
 - name: Upgrade Rust
-  become: true
-  ansible.builtin.command: rustup update
+  ansible.builtin.shell: rustup update

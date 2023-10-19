@@ -26,25 +26,12 @@
   become: true
   roles:
     - upgrade
-- name: Rust
+- name: Applications
   hosts: localhost
   roles:
     - rust
-- name: Install go
-  hosts: localhost
-  roles: 
     - golang
-  tasks: []
-- name: Npm
-  hosts: localhost
-  roles:
     - node
     - firebase
-- name: Fish
-  hosts: localhost
-  roles:
     - fish
-- name: Neovim
-  hosts: localhost
-  roles:
     - nvim
