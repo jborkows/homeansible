@@ -35,3 +35,8 @@
     - firebase
     - fish
     - nvim
+- name: properties 
+  hosts: localhost
+  become: false
+  roles:
+    - upgradeproperties
