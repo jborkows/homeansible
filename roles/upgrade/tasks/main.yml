@@ -20,6 +20,7 @@
     - jq
     - bat  
     - xclip
+    - sqlite3
     # - xmllint
 - name: Snaps 
   ansible.builtin.command: snap refresh

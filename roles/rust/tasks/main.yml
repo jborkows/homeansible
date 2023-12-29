@@ -16,7 +16,7 @@
 - name: Upgrade Rust
   ansible.builtin.shell: rustup update
 - name: Check if ripgrep is installed
-  ansible.builtin.command: which rigrep
+  ansible.builtin.command: which rg
   register: ripgrep_exists
   ignore_errors: true
 - name: Install ripgrep
@@ -28,6 +28,7 @@
      content: |
       --hidden
       --glob=!.git/*
+      --glob=!.gitkeep
 
 - name: Check if environment variable is defined and has the desired value
   set_fact:
