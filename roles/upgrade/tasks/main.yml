@@ -21,9 +21,12 @@
     - bat  
     - xclip
     - sqlite3
+    - libfuse2
+    - wmctrl
     # - xmllint
 - name: Snaps 
   ansible.builtin.command: snap refresh
-- name: Install Snaps
-  ansible.builtin.command: snap install yq
-
+- name: Install Snaps yq
+  ansible.builtin.command: snap install yq 
+- name: Install Snaps gh
+  ansible.builtin.command: snap install gh
