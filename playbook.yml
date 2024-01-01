@@ -35,6 +35,9 @@
     - firebase
     - fish
     - nvim
+    - role: glow
+      tags:
+        - glow
 - name: properties 
   hosts: localhost
   become: false

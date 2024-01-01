@@ -30,3 +30,5 @@
   ansible.builtin.command: snap install yq 
 - name: Install Snaps gh
   ansible.builtin.command: snap install gh
+- name: Install Snaps glow
+  ansible.builtin.command: snap install glow
