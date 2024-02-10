@@ -26,11 +26,16 @@
   become: true
   roles:
     - upgrade
+- name: golang
+  hosts: localhost
+  roles:
+    - role: golang
+      tags:
+        - golang
 - name: Applications
   hosts: localhost
   roles:
     - rust
-    - golang
     - node
     - firebase
     - fish
