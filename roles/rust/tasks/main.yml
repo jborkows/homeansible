@@ -15,6 +15,8 @@
   ansible.builtin.shell: /tmp/sh.rustup.rs -y
 - name: Upgrade Rust
   ansible.builtin.shell: rustup update
+- name: Install stylua
+  ansible.builtin.shell: cargo install stylua
 - name: Check if ripgrep is installed
   ansible.builtin.command: which rg
   register: ripgrep_exists
