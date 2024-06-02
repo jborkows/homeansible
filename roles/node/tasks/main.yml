@@ -12,7 +12,7 @@
   when: "not 'pnpm' in command_output.stdout"
   command: npm install -g @pnpm/exe 
 - name: Generate pnpm completion
-  command: pnpm completion
+  command: pnpm completion bash
   register: completion_output
   changed_when: false
 
