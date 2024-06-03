@@ -32,6 +32,12 @@
     - role: golang
       tags:
         - golang
+- name: kitty
+  hosts: localhost
+  roles:
+    - role: kitty
+      tags:
+        - kitty
 - name: Applications
   hosts: localhost
   roles:
