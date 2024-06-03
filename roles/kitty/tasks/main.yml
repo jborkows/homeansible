@@ -1,0 +1,72 @@
+---
+ - name: Check Kitty version
+   command: kitty -v
+   register: kitty_version
+   ignore_errors: true
+   changed_when: false
+ - name: Install Kitty if not present
+   shell: curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+   when: kitty_version.rc != 0
+   register: kitty_install
+   changed_when: "'Downloaded and installed Kitty' in kitty_install.stdout"
+ - name: Print installation result
+   debug:
+     msg: "{{ kitty_install.stdout_lines }}"
+   when: kitty_install is defined and kitty_install.changed
+ - name: Print Kitty version
+   debug:
+     msg: "Kitty is installed. Version: {{ kitty_version.stdout }}"
+   when: kitty_version.rc == 0 or (kitty_install is defined and kitty_install.changed)
+ - name: Check if kitty.desktop exists
+   stat:
+     path: "~/.local/share/applications/kitty.desktop"
+   register: kitty_desktop
+ - name: Create symbolic links for kitty and kitten
+   shell: ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/
+   when: not kitty_desktop.stat.exists
+ - name: Copy kitty.desktop to applications directory
+   shell: cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+   when: not kitty_desktop.stat.exists
+ - name: Copy kitty-open.desktop to applications directory
+   shell: cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
+   when: not kitty_desktop.stat.exists
+ - name: Update paths in kitty desktop files
+   shell: |
+     sed -i "s|Icon=kitty|Icon=become: true/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" become: true/.local/share/applications/kitty*.desktop
+     sed -i "s|Exec=kitty|Exec=become: true/.local/kitty.app/bin/kitty|g" become: true/.local/share/applications/kitty*.desktop
+   when: not kitty_desktop.stat.exists
+ - name: Set kitty as the default terminal in xdg-terminal-exec
+   shell: echo 'kitty.desktop' > ~/.config/xdg-terminals.list
+   when: not kitty_desktop.stat.exists
+ - name: Check if kitty.conf does not exist or does not contain "Catppuccin"
+   shell: "grep -q 'Catppuccin' ~/.config/kitty/kitty.conf || [ ! -f ~/.config/kitty/kitty.conf ]"
+   register: check_kitty_conf
+ - name: Download mocha.conf file if conditions are met
+   when: check_kitty_conf.rc == 0
+   block:
+     - name: Download mocha.conf file
+       get_url:
+         url: "https://raw.githubusercontent.com/catppuccin/kitty/main/themes/mocha.conf"
+         dest: "/tmp/mocha.conf"
+     - name: Create kitty directory if it doesn't exist
+       file:
+         path: "~/.config/kitty"
+         state: directory
+     - name: Copy mocha.conf to kitty.conf
+       command: "cp /tmp/mocha.conf ~/.config/kitty/kitty.conf"
+ - name: Check if kitty.conf does not exist or does not contain "enable_audio_bell no"
+   shell: "[  -f ~/.config/kitty/kitty.conf ] &&  grep -q 'enable_audio_bell no' ~/.config/kitty/kitty.conf "
+   register: check_kitty_bell
+   ignore_errors: true
+ - name: Disable bell
+   when: check_kitty_bell.rc == 1
+   block:
+     - name: Create kitty directory if it doesn't exist
+       file:
+         path: "~/.config/kitty"
+         state: directory
+     - name: Add line
+       lineinfile:
+         path: "~/.config/kitty/kitty.conf"
+         line: "enable_audio_bell no"
+         insertafter: EOF
