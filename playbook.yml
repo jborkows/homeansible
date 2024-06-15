@@ -21,18 +21,25 @@
     - name: ansible_become_password
       prompt: "Enter your password for sudo:"
       private: true
-- name: Update 
+- name: Update
   hosts: localhost
   become: true
   roles:
     - upgrade
-- name: golang
+- name: Golang
   hosts: localhost
   roles:
     - role: golang
       tags:
         - golang
-- name: kitty
+- name: Copyq
+  hosts: localhost
+  become: true
+  roles:
+    - role: copyq
+      tags:
+        - copyq
+- name: Kitty
   hosts: localhost
   roles:
     - role: kitty
@@ -49,7 +56,7 @@
     - role: glow
       tags:
         - glow
-- name: properties 
+- name: Properties
   hosts: localhost
   become: false
   roles:

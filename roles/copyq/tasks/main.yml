@@ -1,0 +1,19 @@
+---
+- name: Install software-properties-common and python-software-properties
+  ansible.builtin.apt:
+    name:
+      - software-properties-common
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600 # Optional: to avoid updating cache if it was updated in the last hour
+- name: Add CopyQ PPA
+  ansible.builtin.apt_repository:
+    repo: ppa:hluk/copyq
+    state: present
+    update_cache: yes
+- name: Install CopyQ
+  ansible.builtin.apt:
+    name: copyq
+    state: present
+    update_cache: yes
+
