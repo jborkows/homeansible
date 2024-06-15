@@ -1,0 +1,19 @@
+---
+- name: Create .bash_customization in the user's home directory
+  template:
+    src: customization.j2
+    dest: "{{ ansible_env.HOME }}/.bash_customization"
+    owner: "{{ ansible_env.USER }}"
+    mode: '0644'
+- name: Ensure .bashrc sources .bash_customization
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: "source ~/.bash_customization"
+    create: true
+    state: present
+  register: bashrc_updated
+
+- name: Source the shell configuration file
+  ansible.builtin.shell: |
+    source ~/.bashrc
+    echo "Changes to ~/.bashrc sourced"
