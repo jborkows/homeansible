@@ -24,13 +24,6 @@
     - role: golang
       tags:
         - golang
-- name: Copyq
-  hosts: localhost
-  become: true
-  roles:
-    - role: copyq
-      tags:
-        - copyq
 - name: Kitty
   hosts: localhost
   roles:
