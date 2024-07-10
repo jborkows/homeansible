@@ -17,7 +17,7 @@
     create: yes
   when: "'~/programs' not in path_output.stdout"
 - name: Update packer
-  ansible.builtin.command: ~/programs/nvim --headless -c 'lua UpdatePacker()' -c 'q'
+  ansible.builtin.command: ~/programs/nvim --headless "+Lazy! sync" +qa
 - name: Update mason
   ansible.builtin.command: ~/programs/nvim --headless -c 'MasonUpdate' -c 'q'
 
