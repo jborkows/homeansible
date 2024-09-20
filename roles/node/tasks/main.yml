@@ -7,6 +7,10 @@
 - name: Update npm
   ansible.builtin.command: npm install -g npm
   become: true
+- name: Update npm
+  ansible.builtin.command: npm install -g neovim
+  become: true
+
 - name: Is pnpm installed
   command: "which pnpm"
   register: command_output

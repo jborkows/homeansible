@@ -23,6 +23,11 @@
     - sqlite3
     - libfuse2
     - wmctrl
+    - libsqlite3-dev
+    - lolcat
+    - lynis
+    - auditd
+    - debsums
     # - xmllint
 - name: Snaps 
   ansible.builtin.command: snap refresh
