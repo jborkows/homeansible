@@ -28,6 +28,9 @@
     - lynis
     - auditd
     - debsums
+    - obs-studio 
+    - ffmpeg 
+    - pipewire
     # - xmllint
 - name: Snaps 
   ansible.builtin.command: snap refresh
